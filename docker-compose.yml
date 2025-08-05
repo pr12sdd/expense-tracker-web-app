@@ -16,10 +16,11 @@ services:
       - "3306:3306"
     restart: always
     healthcheck:
-        test: ["CMD", "mysql", "--user=root", "--password=Test@123", "--execute=SHOW DATABASES;"]
+        test: ["CMD", "mysqladmin", "ping","-h","localhost","-uroot","-pTest@123"]
         interval: 10s
         timeout: 5s
         retries: 5
+        start_period: 60s
     
 
   java_app:
@@ -38,7 +39,7 @@ services:
       - db
     restart: always
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/actuator/health"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
